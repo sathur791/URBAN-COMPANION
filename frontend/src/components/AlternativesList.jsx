@@ -1,44 +1,75 @@
-import { Clock, Map, Bus, ArrowRight } from 'lucide-react';
+import { Clock, MapPin, Bus, Car, Footprints, Bike, ArrowRight, ShieldCheck } from 'lucide-react';
 
-export default function AlternativesList({ options }) {
+export default function AlternativesList({ options, onSelectOption, selectedOptionId }) {
   if (!options || options.length === 0) return null;
 
-  const modeIcons = {
-    drive: <Map size={14} />,
-    transit: <Bus size={14} />,
-    walk: <Clock size={14} />,
+  const getModeIcon = (mode) => {
+    switch (mode?.toLowerCase()) {
+      case 'drive':
+      case 'car':
+        return <Car size={16} />;
+      case 'transit':
+      case 'bus':
+      case 'train':
+        return <Bus size={16} />;
+      case 'walk':
+      case 'foot':
+        return <Footprints size={16} />;
+      case 'bike':
+      case 'bicycle':
+        return <Bike size={16} />;
+      default:
+        return <Clock size={16} />;
+    }
   };
 
   return (
     <div className="alternatives-panel">
-      <h4>Alternative Options</h4>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+        <h4>Ranked Travel Options</h4>
+        <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{options.length} options evaluated</span>
+      </div>
+
       <div className="alternatives-list">
-        {options.map((opt, i) => (
-          <div key={opt.option_id} className={`alt-option ${i === 0 ? 'top-pick' : ''}`}>
-            <div className="alt-rank">
-              <span className="rank-number">#{i + 1}</span>
-              {i === 0 && <span className="top-badge">Best</span>}
-            </div>
-            <div className="alt-info">
-              <div className="alt-header">
-                <span className="alt-label">{opt.label}</span>
-                <span className="alt-score">{opt.score}/100</span>
+        {options.map((opt, i) => {
+          const isSelected = selectedOptionId === opt.option_id || (i === 0 && !selectedOptionId);
+          return (
+            <div
+              key={opt.option_id || i}
+              className={`alt-option ${i === 0 ? 'top-pick' : ''} ${isSelected ? 'selected' : ''}`}
+              onClick={() => onSelectOption && onSelectOption(opt)}
+            >
+              <div className="alt-rank">
+                <span className="rank-number">#{i + 1}</span>
+                {i === 0 && <span className="top-badge">Top Pick</span>}
               </div>
-              <div className="alt-meta">
-                <span className="alt-time">{opt.travel_time_minutes} min</span>
-                <span className="alt-separator">·</span>
-                <span className="alt-mode">{opt.modeIcons || opt.mode}</span>
-                {opt.distance_km && (
-                  <>
-                    <span className="alt-separator">·</span>
-                    <span className="alt-distance">{opt.distance_km} km</span>
-                  </>
-                )}
+
+              <div className="alt-info">
+                <div className="alt-header">
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ color: 'var(--primary)' }}>{getModeIcon(opt.mode)}</span>
+                    <span className="alt-label">{opt.label}</span>
+                  </div>
+                  <span className="alt-score">{opt.score}/100</span>
+                </div>
+
+                <div className="alt-meta">
+                  <span className="alt-time">{opt.travel_time_minutes} min travel</span>
+                  <span>·</span>
+                  <span style={{ textTransform: 'capitalize' }}>{opt.mode}</span>
+                  {opt.distance_km && (
+                    <>
+                      <span>·</span>
+                      <span>{opt.distance_km} km</span>
+                    </>
+                  )}
+                </div>
+
+                {opt.description && <p className="alt-desc">{opt.description}</p>}
               </div>
-              <p className="alt-desc">{opt.description}</p>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

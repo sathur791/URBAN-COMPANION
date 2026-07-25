@@ -97,7 +97,8 @@ def train_and_save():
     feature_cols = df.columns.tolist()
     X = df.values
 
-    os.makedirs("/ml/models", exist_ok=True)
+    models_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models"))
+    os.makedirs(models_dir, exist_ok=True)
 
     metrics = {}
 
@@ -107,7 +108,7 @@ def train_and_save():
         objective="reg:squarederror", random_state=42,
     )
     traffic_model.fit(X, traffic_y)
-    traffic_model.save_model("/ml/models/traffic_model.json")
+    traffic_model.save_model(os.path.join(models_dir, "traffic_model.json"))
     traffic_pred = traffic_model.predict(X)
     traffic_mae = float(np.mean(np.abs(traffic_y - traffic_pred)))
     traffic_rmse = float(np.sqrt(np.mean((traffic_y - traffic_pred) ** 2)))
@@ -119,7 +120,7 @@ def train_and_save():
         objective="regression", random_state=42, verbose=-1,
     )
     crowd_model.fit(X, crowd_y)
-    crowd_model.booster_.save_model("/ml/models/crowd_model.txt")
+    crowd_model.booster_.save_model(os.path.join(models_dir, "crowd_model.txt"))
     crowd_pred = crowd_model.predict(X)
     crowd_mae = float(np.mean(np.abs(crowd_y - crowd_pred)))
     crowd_rmse = float(np.sqrt(np.mean((crowd_y - crowd_pred) ** 2)))
@@ -131,7 +132,7 @@ def train_and_save():
         objective="reg:squarederror", random_state=42,
     )
     parking_model.fit(X, parking_y)
-    parking_model.save_model("/ml/models/parking_model.json")
+    parking_model.save_model(os.path.join(models_dir, "parking_model.json"))
     parking_pred = parking_model.predict(X)
     parking_mae = float(np.mean(np.abs(parking_y - parking_pred)))
     parking_rmse = float(np.sqrt(np.mean((parking_y - parking_pred) ** 2)))
@@ -140,7 +141,7 @@ def train_and_save():
     print("Training complete!")
     print(json.dumps(metrics, indent=2))
 
-    with open("/ml/models/metrics.json", "w") as f:
+    with open(os.path.join(models_dir, "metrics.json"), "w") as f:
         json.dump(metrics, f, indent=2)
 
     return metrics

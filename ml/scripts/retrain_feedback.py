@@ -7,7 +7,10 @@ import lightgbm as lgb
 from datetime import datetime
 
 
-def load_feedback_data(feedback_file: str = "/ml/data/feedback_log.json") -> pd.DataFrame:
+DEFAULT_FEEDBACK_FILE = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "feedback_log.json"))
+
+
+def load_feedback_data(feedback_file: str = DEFAULT_FEEDBACK_FILE) -> pd.DataFrame:
     if os.path.exists(feedback_file):
         with open(feedback_file) as f:
             data = json.load(f)
@@ -53,9 +56,11 @@ def retrain_with_feedback():
     accepted = feedback["reaction"].apply(lambda x: 1 if x == "up" else 0).values
     traffic_y = 15 + X_new[:, 10] * 5 + np.random.normal(0, 3, n_new) - accepted[:n_new] * 2
 
+    models_dir = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "models"))
+    os.makedirs(models_dir, exist_ok=True)
     model = xgb.XGBRegressor(n_estimators=100, max_depth=5, learning_rate=0.05, random_state=42)
     model.fit(X_new, traffic_y)
-    model.save_model("/ml/models/traffic_model.json")
+    model.save_model(os.path.join(models_dir, "traffic_model.json"))
 
     print("Retraining complete. Models updated.")
 

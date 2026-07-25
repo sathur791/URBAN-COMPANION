@@ -1,24 +1,41 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { Car, ParkingCircle, Navigation } from 'lucide-react';
 
-export default function MapView({ conditions }) {
+export default function MapView({ conditions, originCoords, destCoords, originAddress, destAddress, routesGeometry, selectedMode, onPickLocation }) {
   const mapRef = useRef(null);
   const mapInstance = useRef(null);
 
+  const [showTraffic, setShowTraffic] = useState(true);
+  const [showParking, setShowParking] = useState(true);
+  const [showRoute, setShowRoute] = useState(true);
+
+  // Initialize Leaflet Map
   useEffect(() => {
     if (!mapRef.current || mapInstance.current) return;
 
-    mapInstance.current = L.map(mapRef.current, {
-      zoomControl: false,
-    }).setView([40.7128, -74.006], 13);
+    const defaultLat = originCoords?.lat || 40.7128;
+    const defaultLng = originCoords?.lng || -74.006;
 
-    L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current);
+    const map = L.map(mapRef.current, {
+      zoomControl: false,
+    }).setView([defaultLat, defaultLng], 13);
+
+    L.control.zoom({ position: 'bottomright' }).addTo(map);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
       maxZoom: 19,
-    }).addTo(mapInstance.current);
+    }).addTo(map);
+
+    map.on('click', (e) => {
+      if (onPickLocation) {
+        onPickLocation({ lat: e.latlng.lat, lng: e.latlng.lng });
+      }
+    });
+
+    mapInstance.current = map;
 
     return () => {
       if (mapInstance.current) {
@@ -28,73 +45,159 @@ export default function MapView({ conditions }) {
     };
   }, []);
 
+  // Update map layers based on coordinates, OSRM geometry & toggles
   useEffect(() => {
-    if (!mapInstance.current || !conditions) return;
+    if (!mapInstance.current) return;
+    const map = mapInstance.current;
 
-    mapInstance.current.eachLayer((layer) => {
-      if (layer instanceof L.Marker || layer instanceof L.Polyline) {
-        mapInstance.current.removeLayer(layer);
+    // Clear existing markers and lines
+    map.eachLayer((layer) => {
+      if (layer instanceof L.Marker || layer instanceof L.Polyline || layer instanceof L.Circle) {
+        map.removeLayer(layer);
       }
     });
 
-    const origin = L.marker([40.7128, -74.006], {
+    const oLat = originCoords?.lat || 40.7128;
+    const oLng = originCoords?.lng || -74.006;
+    const dLat = destCoords?.lat || 40.758;
+    const dLng = destCoords?.lng || -73.9855;
+
+    // Origin Marker
+    const originMarker = L.marker([oLat, oLng], {
       icon: L.divIcon({
-        className: 'marker-origin',
-        html: '<div class="marker-dot origin"></div>',
-        iconSize: [20, 20],
+        className: 'custom-leaflet-marker',
+        html: `<div style="
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
+          background: #10b981;
+          border: 3px solid white;
+          box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 800;
+          font-size: 11px;
+        ">A</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12],
       }),
-    }).addTo(mapInstance.current);
-    origin.bindPopup('<b>Origin</b><br>Current Location');
+    }).addTo(map);
+    originMarker.bindPopup(`<b>Origin</b><br>${originAddress || 'Selected Origin'}`);
 
-    const dest = L.marker([40.758, -73.9855], {
+    // Destination Marker
+    const destMarker = L.marker([dLat, dLng], {
       icon: L.divIcon({
-        className: 'marker-dest',
-        html: '<div class="marker-dot dest"></div>',
-        iconSize: [20, 20],
+        className: 'custom-leaflet-marker',
+        html: `<div style="
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          background: #6366f1;
+          border: 3px solid white;
+          box-shadow: 0 4px 16px rgba(99, 102, 241, 0.6);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 800;
+          font-size: 11px;
+        ">B</div>`,
+        iconSize: [26, 26],
+        iconAnchor: [13, 13],
       }),
-    }).addTo(mapInstance.current);
-    dest.bindPopup('<b>Destination</b><br>Target Location');
+    }).addTo(map);
+    destMarker.bindPopup(`<b>Destination</b><br>${destAddress || 'Selected Arrival Point'}`);
 
-    L.polyline([[40.7128, -74.006], [40.758, -73.9855]], {
-      color: '#6366f1',
-      weight: 4,
-      opacity: 0.8,
-      dashArray: '10, 6',
-    }).addTo(mapInstance.current);
+    // Draw Real Road Polyline Geometry
+    if (showRoute) {
+      const modeKey = (selectedMode || 'drive').toLowerCase();
+      let geom = routesGeometry?.[modeKey] || routesGeometry?.['drive'];
 
+      if (!geom || geom.length === 0) {
+        geom = [[oLat, oLng], [dLat, dLng]];
+      }
+
+      const colorMap = { drive: '#6366f1', bike: '#f59e0b', walk: '#10b981', transit: '#0ea5e9' };
+      const routeColor = colorMap[modeKey] || '#6366f1';
+
+      L.polyline(geom, {
+        color: routeColor,
+        weight: 6,
+        opacity: 0.9,
+        lineCap: 'round',
+        lineJoin: 'round',
+      }).addTo(map);
+    }
+
+    // Traffic congestion overlay circles
     const traffic = conditions?.traffic;
-    if (traffic) {
-      const congestionColor = { light: '#22c55e', moderate: '#f59e0b', heavy: '#ef4444' };
-      const color = congestionColor[traffic.congestion_level] || '#6366f1';
+    if (showTraffic && traffic) {
+      const congestionColors = { light: '#22c55e', moderate: '#f59e0b', heavy: '#ef4444' };
+      const color = congestionColors[traffic.congestion_level] || '#6366f1';
+      const midLat = (oLat + dLat) / 2;
+      const midLng = (oLng + dLng) / 2;
 
-      L.circle([40.7354, -73.995], {
+      L.circle([midLat, midLng], {
         radius: 800,
         color: color,
         fillColor: color,
-        fillOpacity: 0.15,
+        fillOpacity: 0.18,
         weight: 2,
-      }).addTo(mapInstance.current).bindPopup(`<b>Traffic Zone</b><br>Status: ${traffic.congestion_level}`);
+      }).addTo(map).bindPopup(`<b>Live Traffic Telemetry</b><br>Status: <strong>${traffic.congestion_level || 'Moderate'}</strong>`);
     }
 
+    // Parking spot markers
     const parking = conditions?.parking;
-    if (parking) {
-      const parkingSpots = [
-        [40.755, -73.988],
-        [40.761, -73.982],
-        [40.757, -73.991],
+    if (showParking && parking) {
+      const spots = [
+        [dLat - 0.003, dLng - 0.002],
+        [dLat + 0.004, dLng + 0.003],
+        [dLat - 0.001, dLng + 0.005],
       ];
-      parkingSpots.forEach((pos, i) => {
+      spots.forEach((pos, i) => {
         L.circleMarker(pos, {
-          radius: 8,
-          color: parking.nearby_spots > 50 ? '#22c55e' : '#f59e0b',
-          fillColor: parking.nearby_spots > 50 ? '#22c55e' : '#f59e0b',
-          fillOpacity: 0.7,
-        }).addTo(mapInstance.current).bindPopup(`<b>Parking Spot ${i + 1}</b><br>${parking.nearby_spots} spots available`);
+          radius: 9,
+          color: (parking.nearby_spots || 0) > 40 ? '#10b981' : '#f59e0b',
+          fillColor: (parking.nearby_spots || 0) > 40 ? '#10b981' : '#f59e0b',
+          fillOpacity: 0.85,
+        }).addTo(map).bindPopup(`<b>Parking Garage #${i + 1}</b><br>${parking.nearby_spots || 35} open spots<br>Price: $${parking.avg_price_per_hour || '4.00'}/hr`);
       });
     }
 
-    mapInstance.current.fitBounds([[40.7128, -74.006], [40.758, -73.9855]], { padding: [50, 50] });
-  }, [conditions]);
+    // Fit map bounds cleanly around origin & destination
+    map.fitBounds([[oLat, oLng], [dLat, dLng]], { padding: [60, 60] });
 
-  return <div ref={mapRef} className="map-view" />;
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
+  }, [conditions, originCoords, destCoords, originAddress, destAddress, routesGeometry, selectedMode, showTraffic, showParking, showRoute]);
+
+  return (
+    <div className="map-card-wrapper">
+      <div className="map-header-controls">
+        <button
+          className={`layer-toggle-btn ${showTraffic ? 'active' : ''}`}
+          onClick={() => setShowTraffic(!showTraffic)}
+        >
+          <Car size={14} /> Traffic
+        </button>
+        <button
+          className={`layer-toggle-btn ${showParking ? 'active' : ''}`}
+          onClick={() => setShowParking(!showParking)}
+        >
+          <ParkingCircle size={14} /> Parking
+        </button>
+        <button
+          className={`layer-toggle-btn ${showRoute ? 'active' : ''}`}
+          onClick={() => setShowRoute(!showRoute)}
+        >
+          <Navigation size={14} /> Real Geometry
+        </button>
+      </div>
+
+      <div ref={mapRef} className="map-view" />
+    </div>
+  );
 }

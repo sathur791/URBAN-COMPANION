@@ -6,7 +6,7 @@ echo.
 
 REM Start Backend
 echo [1/2] Starting Backend API on port 8000...
-start "UrbanBackend" cmd /c "cd /d "%~dp0backend" && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
+start "UrbanBackend" cmd /c "cd /d "%~dp0backend" && .venv\Scripts\python -m uvicorn app.main:app --host 0.0.0.0 --port 8000"
 
 REM Wait for backend
 timeout /t 4 /nobreak >nul

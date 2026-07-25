@@ -9,6 +9,11 @@ build/
 *.egg-info/
 .pytest_cache/
 .ruff_cache/
+.venv/
+venv/
+ENV/
+*.db
+*.sqlite3
 ml/models/*.json
 ml/models/*.txt
 ml/models/*.bin

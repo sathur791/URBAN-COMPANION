@@ -58,6 +58,8 @@ class QueryRequest(BaseModel):
     image_data: Optional[str] = None
     dest_lat: Optional[float] = None
     dest_lng: Optional[float] = None
+    origin_name: Optional[str] = None
+    dest_name: Optional[str] = None
 
 
 class NLUResult(BaseModel):
@@ -90,6 +92,14 @@ class QueryResponse(BaseModel):
     live_conditions: dict
     rag_context: Optional[str] = None
     query_id: Optional[int] = None
+    origin_coords: Optional[dict] = None
+    dest_coords: Optional[dict] = None
+    origin_address: Optional[str] = None
+    dest_address: Optional[str] = None
+    routes_geometry: Optional[dict] = None
+    departure_windows: Optional[List[dict]] = None
+    eco_impact: Optional[dict] = None
+    turn_by_turn_steps: Optional[List[dict]] = None
 
 
 # Feedback
@@ -111,8 +121,11 @@ class TripResponse(BaseModel):
     origin_lng: float
     dest_lat: float
     dest_lng: float
+    origin_name: Optional[str] = None
+    dest_name: Optional[str] = None
     mode: Optional[str] = None
     created_at: datetime
 
     class Config:
         from_attributes = True
+
