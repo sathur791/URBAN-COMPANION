@@ -1,0 +1,15 @@
+__pycache__/
+*.py[cod]
+.env
+node_modules/
+dist/
+build/
+*.log
+.vite/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+ml/models/*.json
+ml/models/*.txt
+ml/models/*.bin
+.DS_Store
