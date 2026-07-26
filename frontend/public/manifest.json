@@ -1,0 +1,30 @@
+{
+  "short_name": "Urban Companion",
+  "name": "Urban Companion - Smart Transit & Eco Mobility",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0f172a",
+  "theme_color": "#3b82f6",
+  "display": "standalone",
+  "orientation": "portrait",
+  "description": "AI-powered urban companion for eco-friendly route planning, real-time safety scores, multi-modal transport options, and green impact metrics."
+}

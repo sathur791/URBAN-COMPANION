@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 * {
   margin: 0;
@@ -8,60 +8,69 @@
 
 :root {
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Color Palette - Light Mode */
-  --bg-main: #f4f6fb;
-  --bg-surface: #ffffff;
+  /* H&M Inspired Editorial Color Palette - Light Mode */
+  --bg-main: #f5f4f0;            /* Warm alabaster cream */
+  --bg-surface: #ffffff;         /* Pure white cards */
   --bg-surface-elevated: #ffffff;
-  --bg-glass: rgba(255, 255, 255, 0.85);
-  --border-color: #e2e8f0;
-  --border-subtle: #f1f5f9;
+  --bg-glass: rgba(255, 255, 255, 0.88);
+  --border-color: rgba(17, 17, 17, 0.09);
+  --border-subtle: rgba(17, 17, 17, 0.04);
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-primary: #111111;       /* Deep obsidian black */
+  --text-secondary: #555555;     /* Neutral charcoal */
+  --text-muted: #8c8c8c;         /* Soft grey */
 
-  --primary: #6366f1;
-  --primary-hover: #4f46e5;
-  --primary-light: #eef2ff;
-  --primary-glow: rgba(99, 102, 241, 0.25);
+  --primary: #e50010;            /* Signature H&M Crimson Red */
+  --primary-hover: #c4000e;
+  --primary-light: rgba(229, 0, 16, 0.08);
+  --primary-glow: rgba(229, 0, 16, 0.25);
 
-  --accent-teal: #0ea5e9;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
+  --accent-gold: #c59b27;        /* Refined Champagne Gold */
+  --accent-teal: #0f766e;        /* Deep Editorial Teal */
+  --accent-emerald: #059669;     /* Rich Emerald */
+  --accent-amber: #d97706;       /* Warm Amber */
+  --accent-rose: #e50010;
 
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08), 0 2px 4px rgba(15, 23, 42, 0.04);
-  --shadow-lg: 0 12px 28px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.06);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.06), 0 2px 6px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.1), 0 6px 14px rgba(0, 0, 0, 0.04);
 
   --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
 }
 
 [data-theme='dark'] {
-  --bg-main: #090d16;
-  --bg-surface: #111827;
-  --bg-surface-elevated: #1f2937;
-  --bg-glass: rgba(17, 24, 39, 0.85);
-  --border-color: #1f2937;
-  --border-subtle: #374151;
+  /* H&M Midnight Luxe Editorial Palette - Dark Mode */
+  --bg-main: #0c0c0e;            /* Deep obsidian midnight */
+  --bg-surface: #17171a;         /* Dark elevated slate */
+  --bg-surface-elevated: #222226;
+  --bg-glass: rgba(23, 23, 26, 0.88);
+  --border-color: rgba(255, 255, 255, 0.12);
+  --border-subtle: rgba(255, 255, 255, 0.06);
 
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  --text-primary: #fafaf9;       /* Warm ivory white */
+  --text-secondary: #a1a1aa;     /* Silver grey */
+  --text-muted: #71717a;
 
-  --primary: #818cf8;
-  --primary-hover: #6366f1;
-  --primary-light: rgba(99, 102, 241, 0.15);
-  --primary-glow: rgba(129, 140, 248, 0.35);
+  --primary: #ff2a3b;            /* Electric Crimson Red */
+  --primary-hover: #e50010;
+  --primary-light: rgba(255, 42, 59, 0.15);
+  --primary-glow: rgba(255, 42, 59, 0.35);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.6);
+  --accent-gold: #fbbf24;
+  --accent-teal: #14b8a6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #ff2a3b;
+
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.7);
 }
 
 body {
