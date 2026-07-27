@@ -15,6 +15,7 @@ import AIChatbot from './AIChatbot';
 import MobileBottomNav from './MobileBottomNav';
 import EmergencySOSModal from './EmergencySOSModal';
 import EcoAnalyticsTab from './EcoAnalyticsTab';
+import VoiceAssistant from './VoiceAssistant';
 
 import { query as queryApi } from '../api';
 import { Compass, Moon, Sun, User, Share2, Car, Bus, ParkingCircle, ShieldAlert, Sparkles, Flame, Zap } from 'lucide-react';
@@ -71,6 +72,12 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
       setLoading(false);
     }
   }, [originName, destName, originCoords, destCoords]);
+
+  const handleVoiceRoute = useCallback(async (origin, dest) => {
+    setOriginName(origin);
+    setDestName(dest);
+    handleQuery({ origin_name: origin, dest_name: dest });
+  }, [handleQuery]);
 
   // Handle bottom tab selection
   const handleTabChange = (tabId) => {
@@ -363,6 +370,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
       )}
 
       {/* MOBILE BOTTOM NAVIGATION DOCK */}
+      <VoiceAssistant onVoiceRoute={handleVoiceRoute} currentOrigin={originName} currentDest={destName} />
       <MobileBottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
     </div>
   );

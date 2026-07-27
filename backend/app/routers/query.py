@@ -88,7 +88,7 @@ async def handle_query(
         "transit": city_data.get("transit", {}),
     }
 
-    final_text = await generate_response(ranked, shap_explanations, rag_ctx, req.text or "")
+    final_text = await generate_response(ranked, shap_explanations, rag_ctx, req.text or "", nlu, city_data)
 
     # Log trip in DB
     new_trip = Trip(
