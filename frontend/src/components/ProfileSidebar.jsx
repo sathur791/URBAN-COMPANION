@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { History, X, Settings, LogOut, User, Check, SlidersHorizontal, MapPin } from 'lucide-react';
+import { History, X, Settings, LogOut, User, Check, SlidersHorizontal, MapPin, Key, Cpu } from 'lucide-react';
 import { user } from '../api';
 
 export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
@@ -7,6 +7,8 @@ export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
   const [trips, setTrips] = useState([]);
   const [preferences, setPreferences] = useState([]);
   const [updatingKey, setUpdatingKey] = useState(null);
+  const [grokApiKey, setGrokApiKey] = useState(localStorage.getItem('grok_api_key') || '');
+  const [savedKeySuccess, setSavedKeySuccess] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -15,6 +17,13 @@ export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
       user.getPreferences().then(r => setPreferences(r.data)).catch(() => {});
     }
   }, [open]);
+
+  const handleSaveGrokKey = (e) => {
+    e.preventDefault();
+    localStorage.setItem('grok_api_key', grokApiKey.trim());
+    setSavedKeySuccess(true);
+    setTimeout(() => setSavedKeySuccess(false), 2500);
+  };
 
   const handleUpdatePref = async (key, val) => {
     setUpdatingKey(key);
@@ -48,7 +57,7 @@ export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
 
       <div className={`profile-sidebar ${open ? 'open' : ''}`}>
         <div className="sidebar-header">
-          <h3>User Settings & History</h3>
+          <h3>User Settings & Grok AI</h3>
           <button className="icon-btn" onClick={onClose} style={{ width: 32, height: 32 }}>
             <X size={18} />
           </button>
@@ -61,6 +70,51 @@ export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
             <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{profile.email}</span>
           </div>
         )}
+
+        {/* GROK API KEY CONFIGURATION */}
+        <div className="sidebar-section">
+          <h4><Cpu size={14} color="var(--primary)" /> Grok AI Engine Key</h4>
+          <form onSubmit={handleSaveGrokKey} style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '6px' }}>
+            <div style={{ display: 'flex', gap: '6px' }}>
+              <input
+                type="password"
+                placeholder="Enter Grok API Key (xai-...)"
+                value={grokApiKey}
+                onChange={(e) => setGrokApiKey(e.target.value)}
+                style={{
+                  flex: 1,
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '8px 12px',
+                  color: 'var(--text-primary)',
+                  fontSize: '12px',
+                  outline: 'none'
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  background: 'linear-gradient(135deg, #00f2fe 0%, #7928ca 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '12px',
+                  padding: '8px 14px',
+                  fontWeight: 700,
+                  fontSize: '12px',
+                  cursor: 'pointer'
+                }}
+              >
+                Save
+              </button>
+            </div>
+            {savedKeySuccess && (
+              <span style={{ fontSize: '11px', color: '#00f5a0', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Check size={12} /> Grok API Key Saved Successfully!
+              </span>
+            )}
+          </form>
+        </div>
 
         <div className="sidebar-section">
           <h4><SlidersHorizontal size={14} /> Travel Preferences</h4>

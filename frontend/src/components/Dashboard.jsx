@@ -16,9 +16,10 @@ import MobileBottomNav from './MobileBottomNav';
 import EmergencySOSModal from './EmergencySOSModal';
 import EcoAnalyticsTab from './EcoAnalyticsTab';
 import VoiceAssistant from './VoiceAssistant';
+import SidebarNav from './SidebarNav';
 
 import { query as queryApi } from '../api';
-import { Compass, Moon, Sun, User, Share2, Car, Bus, ParkingCircle, ShieldAlert, Sparkles, Flame, Zap } from 'lucide-react';
+import { Compass, Moon, Sun, User, Share2, Car, Bus, ParkingCircle, ShieldAlert, Sparkles, Flame, Zap, Clock, Navigation, BarChart3, Bot, Leaf, Mic } from 'lucide-react';
 
 export default function Dashboard({ onLogout, theme, toggleTheme }) {
   const [response, setResponse] = useState(null);
@@ -27,8 +28,10 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [sosModalOpen, setSosModalOpen] = useState(false);
+  const [isVoiceOpen, setIsVoiceOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
-  // Mobile Bottom Navigation Tab state ('home', 'routes', 'ai_chat', 'eco_stats', 'profile')
+  // Tab state ('home', 'voice', 'ai_chat', 'eco_stats', 'departure', 'navigation', 'explainability', 'profile')
   const [activeTab, setActiveTab] = useState('home');
 
   const [activeMode, setActiveMode] = useState('all');
@@ -56,8 +59,6 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
       const res = await queryApi.submit(payload);
       setResponse(res.data);
-      // Auto-switch to Routes tab after query succeeds
-      setActiveTab('routes');
 
       if (res.data?.origin_coords) setOriginCoords(res.data.origin_coords);
       if (res.data?.dest_coords) setDestCoords(res.data.dest_coords);
@@ -79,9 +80,10 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
     handleQuery({ origin_name: origin, dest_name: dest });
   }, [handleQuery]);
 
-  // Handle bottom tab selection
   const handleTabChange = (tabId) => {
-    if (tabId === 'profile') {
+    if (tabId === 'voice') {
+      setIsVoiceOpen(true);
+    } else if (tabId === 'profile') {
       setSidebarOpen(true);
     } else {
       setActiveTab(tabId);
@@ -89,288 +91,351 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
   };
 
   return (
-    <div className="dashboard dashboard-mobile-padding">
-      {/* MOBILE APP HEADER */}
-      <header className="dashboard-header">
-        <div className="header-left">
-          <div className="brand-icon-wrapper">
-            <Compass size={24} />
-          </div>
-          <div className="brand-title-group">
-            <h1>Urban Companion</h1>
-            <div className="live-tag">
-              <span className="live-dot" /> Real-Time Urban Mobility
-            </div>
-          </div>
-        </div>
-
-        <div className="header-right">
-          {/* EMERGENCY SOS SAFETY TRIGGER */}
-          <button className="icon-btn sos-header-btn" onClick={() => setSosModalOpen(true)} title="Emergency SOS">
-            <ShieldAlert size={18} /> SOS
-          </button>
-
-          {response && (
-            <button className="icon-btn" onClick={() => setExportModalOpen(true)} title="Export & Share Route">
-              <Share2 size={18} />
-            </button>
-          )}
-
-          <button className="icon-btn" onClick={toggleTheme} title="Toggle Theme (Dark / Light)">
-            {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
-          <button className="icon-btn" onClick={() => setSidebarOpen(true)} title="Profile & Preferences">
-            <User size={18} />
-          </button>
-        </div>
-      </header>
-
-      {/* EMERGENCY SOS MODAL */}
-      <EmergencySOSModal
-        open={sosModalOpen}
-        onClose={() => setSosModalOpen(false)}
-        currentCoords={originCoords}
-      />
-
-      {/* EXPORT ROUTE MODAL */}
-      <ExportRouteModal
-        open={exportModalOpen}
-        onClose={() => setExportModalOpen(false)}
-        originCoords={originCoords}
-        destCoords={destCoords}
-        originAddress={response?.origin_address || originName}
-        destAddress={response?.dest_address || destName}
-      />
-
-      {/* PROFILE SIDEBAR DRAWER */}
-      <ProfileSidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
+    <div style={{ display: 'flex', minHeight: '100vh', background: 'var(--bg-main)', color: 'var(--text-primary)' }}>
+      {/* DESKTOP SIDEBAR NAVIGATION */}
+      <SidebarNav
+        activeTab={activeTab}
+        setActiveTab={handleTabChange}
+        isCollapsed={isSidebarCollapsed}
+        setIsCollapsed={setIsSidebarCollapsed}
+        onOpenSos={() => setSosModalOpen(true)}
+        onOpenProfile={() => setSidebarOpen(true)}
+        theme={theme}
+        toggleTheme={toggleTheme}
         onLogout={onLogout}
-        onReQuery={(data) => {
-          setSidebarOpen(false);
-          handleQuery(data);
-        }}
       />
 
-      {/* TAB 1: HOME TAB */}
-      {activeTab === 'home' && (
-        <div style={{ padding: '16px', maxWidth: '900px', margin: '0 auto', width: '100%' }}>
-          {/* DAILY ECO STREAK & WELCOME BANNER */}
-          <div style={{
-            background: 'linear-gradient(135deg, #111111 0%, #1c1c1e 100%)',
-            borderRadius: '24px',
-            padding: '24px',
-            color: '#ffffff',
-            marginBottom: '20px',
-            border: '1px solid rgba(229, 0, 16, 0.25)',
-            boxShadow: '0 16px 36px -10px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05)',
-            display: 'flex',
-            alignItems: 'center',
-            justify: 'space-between',
-            position: 'relative',
-            overflow: 'hidden'
-          }}>
-            <div style={{
-              position: 'absolute',
-              top: '-40px',
-              right: '-40px',
-              width: '140px',
-              height: '140px',
-              borderRadius: '50%',
-              background: 'radial-gradient(circle, rgba(229, 0, 16, 0.25) 0%, transparent 70%)',
-              pointerEvents: 'none'
-            }} />
-            <div style={{ position: 'relative', zIndex: 1 }}>
-              <div style={{ fontSize: '11px', fontWeight: 800, color: '#e50010', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                H&M EDITORIAL EDITION • URBAN COMPANION
-              </div>
-              <h2 style={{ fontSize: '22px', fontWeight: 800, margin: '6px 0 8px 0', letterSpacing: '-0.02em' }}>Where would you like to explore?</h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '13px' }}>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '4px 12px', borderRadius: '16px', fontWeight: 700, color: '#fafaf9' }}>
-                  <Flame size={14} color="#e50010" /> 7 Day Streak
-                </span>
-                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', background: 'rgba(255, 255, 255, 0.08)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '4px 12px', borderRadius: '16px', fontWeight: 700, color: '#fafaf9' }}>
-                  <Zap size={14} color="#c59b27" /> 34.8kg CO₂ Saved
-                </span>
+      {/* MAIN CONTAINER */}
+      <div 
+        style={{ 
+          flex: 1, 
+          marginLeft: isSidebarCollapsed ? '76px' : '260px', 
+          transition: 'margin-left 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+          minHeight: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100%'
+        }}
+        className="main-app-content"
+      >
+        {/* HEADER BAR */}
+        <header className="dashboard-header" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(6, 7, 10, 0.85)', backdropFilter: 'blur(16px)' }}>
+          <div className="header-left">
+            <div className="brand-title-group">
+              <h1 style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 0%, #00f2fe 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Urban Companion
+              </h1>
+              <div className="live-tag" style={{ fontSize: '11px' }}>
+                <span className="live-dot" /> Real-Time Mobility & Grok AI
               </div>
             </div>
-            <button
-              onClick={() => setActiveTab('ai_chat')}
-              style={{
-                background: '#e50010',
-                color: '#ffffff',
-                border: 'none',
-                borderRadius: '16px',
-                padding: '12px 18px',
-                fontWeight: 800,
-                fontSize: '13px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 6px 20px rgba(229, 0, 16, 0.4)',
-                whiteSpace: 'nowrap',
-                position: 'relative',
-                zIndex: 1,
-                transition: 'transform 0.2s ease, background 0.2s ease'
-              }}
-            >
-              <Sparkles size={16} /> Ask AI Concierge
+          </div>
+
+          <div className="header-right">
+            <button className="icon-btn sos-header-btn" onClick={() => setSosModalOpen(true)} title="Emergency SOS">
+              <ShieldAlert size={18} /> SOS
+            </button>
+
+            {response && (
+              <button className="icon-btn" onClick={() => setExportModalOpen(true)} title="Export & Share Route">
+                <Share2 size={18} />
+              </button>
+            )}
+
+            <button className="icon-btn" onClick={toggleTheme} title="Toggle Obsidian Dark / Light Theme">
+              {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
+
+            <button className="icon-btn" onClick={() => setSidebarOpen(true)} title="Profile & Preferences">
+              <User size={18} />
             </button>
           </div>
+        </header>
 
-          {/* QUERY & SEARCH BAR */}
-          <QueryBar
-            onQuery={handleQuery}
-            loading={loading}
-            activeMode={activeMode}
-            setActiveMode={setActiveMode}
-            originName={originName}
-            setOriginName={setOriginName}
-            destName={destName}
-            setDestName={setDestName}
-            onSelectOrigin={(loc) => setOriginCoords({ lat: loc.lat, lng: loc.lng })}
-            onSelectDest={(loc) => setDestCoords({ lat: loc.lat, lng: loc.lng })}
-          />
+        {/* MODALS & DRAWERS */}
+        <EmergencySOSModal open={sosModalOpen} onClose={() => setSosModalOpen(false)} currentCoords={originCoords} />
+        <ExportRouteModal
+          open={exportModalOpen}
+          onClose={() => setExportModalOpen(false)}
+          originCoords={originCoords}
+          destCoords={destCoords}
+          originAddress={response?.origin_address || originName}
+          destAddress={response?.dest_address || destName}
+        />
+        <ProfileSidebar
+          open={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
+          onLogout={onLogout}
+          onReQuery={(data) => {
+            setSidebarOpen(false);
+            handleQuery(data);
+          }}
+        />
 
-          {/* QUICK DESTINATION PRESETS */}
-          <div style={{ marginTop: '20px' }}>
-            <h4 style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '12px' }}>
-              Quick Route Suggestions
-            </h4>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
-              gap: '12px'
-            }}>
-              <div
-                className="condition-card"
-                style={{ cursor: 'pointer' }}
-                onClick={() => handleQuery({ text: 'Generate fastest route', origin_name: 'Times Square, NY', dest_name: 'Central Park, NY' })}
-              >
-                <div className="condition-icon" style={{ color: 'var(--primary)', background: 'var(--primary-light)' }}>
-                  <Car size={20} />
-                </div>
-                <div className="condition-info" style={{ textAlign: 'left' }}>
-                  <span className="condition-label">Times Square → Central Park</span>
-                  <span className="condition-value" style={{ fontSize: '14px' }}>Fastest Route</span>
-                </div>
-              </div>
-
-              <div
-                className="condition-card"
-                style={{ cursor: 'pointer' }}
-                onClick={() => handleQuery({ text: 'Find parking near airport', origin_name: 'Downtown', dest_name: 'JFK Airport' })}
-              >
-                <div className="condition-icon" style={{ color: 'var(--accent-emerald)', background: 'rgba(16,185,129,0.1)' }}>
-                  <ParkingCircle size={20} />
-                </div>
-                <div className="condition-info" style={{ textAlign: 'left' }}>
-                  <span className="condition-label">Downtown → JFK Airport</span>
-                  <span className="condition-value" style={{ fontSize: '14px' }}>Smart Parking</span>
-                </div>
-              </div>
-
-              <div
-                className="condition-card"
-                style={{ cursor: 'pointer' }}
-                onClick={() => handleQuery({ text: 'Eco transit route', origin_name: 'Grand Central', dest_name: 'Empire State Building' })}
-              >
-                <div className="condition-icon" style={{ color: 'var(--accent-teal)', background: 'rgba(14,165,233,0.1)' }}>
-                  <Bus size={20} />
-                </div>
-                <div className="condition-info" style={{ textAlign: 'left' }}>
-                  <span className="condition-label">Grand Central → Empire State</span>
-                  <span className="condition-value" style={{ fontSize: '14px' }}>Eco Transit</span>
-                </div>
-              </div>
-            </div>
+        {/* ERROR BANNER */}
+        {error && (
+          <div className="error-banner" style={{ margin: '16px 28px 0 28px', borderRadius: '14px', background: 'rgba(255, 42, 95, 0.15)', border: '1px solid rgba(255, 42, 95, 0.35)', color: '#ff477e', padding: '14px 20px', fontWeight: 600 }}>
+            {error}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* ERROR BANNER */}
-      {error && (
-        <div className="error-banner" style={{ margin: '16px 28px 0 28px', borderRadius: '12px' }}>
-          {error}
-        </div>
-      )}
+        {/* SKELETON LOADER */}
+        {loading && <SkeletonLoader />}
 
-      {/* SKELETON LOADER */}
-      {loading && <SkeletonLoader />}
-
-      {/* TAB 2: ROUTES & MAP VIEW */}
-      {activeTab === 'routes' && !loading && (
-        <div style={{ width: '100%', maxWidth: '1600px', margin: '0 auto', padding: '16px' }}>
-          {!response ? (
-            <div className="empty-state">
-              <div className="empty-icon-wrapper">
-                <Compass size={40} />
+        {/* VIEW 1: PLANNER & MAP DASHBOARD */}
+        {activeTab === 'home' && !loading && (
+          <div style={{ padding: '24px', maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
+            {/* HERO BANNER */}
+            <div style={{
+              background: 'linear-gradient(135deg, rgba(14, 16, 23, 0.9) 0%, rgba(20, 23, 34, 0.95) 100%)',
+              borderRadius: '24px',
+              padding: '28px',
+              color: '#ffffff',
+              marginBottom: '24px',
+              border: '1px solid rgba(0, 242, 254, 0.25)',
+              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 242, 254, 0.12)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              position: 'relative',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                position: 'absolute',
+                top: '-50px',
+                right: '-50px',
+                width: '180px',
+                height: '180px',
+                borderRadius: '50%',
+                background: 'radial-gradient(circle, rgba(0, 242, 254, 0.2) 0%, transparent 70%)',
+                pointerEvents: 'none'
+              }} />
+              <div style={{ position: 'relative', zIndex: 1 }}>
+                <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  OBSIDIAN EDITION • GROK AI POWERED
+                </div>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '8px 0 10px 0', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 0%, #00f2fe 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  Where would you like to explore?
+                </h2>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: '#f8fafc' }}>
+                    <Flame size={15} color="#ff2a5f" /> 7 Day Eco Streak
+                  </span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: '#f8fafc' }}>
+                    <Zap size={15} color="#f59e0b" /> 34.8kg CO₂ Saved
+                  </span>
+                </div>
               </div>
-              <h2>No Active Route Selected</h2>
-              <p>Enter your origin & destination on the Home tab to view turn-by-turn navigation, interactive maps, and live conditions.</p>
-              <button className="btn-primary" onClick={() => setActiveTab('home')} style={{ maxWidth: '200px' }}>
-                Go to Route Planner
+              <button
+                onClick={() => setActiveTab('ai_chat')}
+                style={{
+                  background: 'linear-gradient(135deg, #00f2fe 0%, #7928ca 100%)',
+                  color: '#ffffff',
+                  border: 'none',
+                  borderRadius: '18px',
+                  padding: '14px 22px',
+                  fontWeight: 800,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '10px',
+                  boxShadow: '0 8px 24px rgba(0, 242, 254, 0.35)',
+                  whiteSpace: 'nowrap',
+                  position: 'relative',
+                  zIndex: 1,
+                  transition: 'transform 0.2s ease, boxShadow 0.2s ease'
+                }}
+              >
+                <Sparkles size={18} /> Ask AI Concierge
               </button>
             </div>
-          ) : (
-            <div className="dashboard-content" style={{ padding: 0 }}>
-              <div className="main-panel">
-                <MapView
-                  conditions={response.live_conditions}
-                  originCoords={response.origin_coords || originCoords}
-                  destCoords={response.dest_coords || destCoords}
-                  originAddress={response.origin_address || originName}
-                  destAddress={response.dest_address || destName}
-                  routesGeometry={response.routes_geometry}
-                  selectedMode={selectedMode}
-                />
 
-                <EcoImpactBadge impact={response.eco_impact} />
+            {/* QUERY & SEARCH BAR */}
+            <QueryBar
+              onQuery={handleQuery}
+              loading={loading}
+              activeMode={activeMode}
+              setActiveMode={setActiveMode}
+              originName={originName}
+              setOriginName={setOriginName}
+              destName={destName}
+              setDestName={setDestName}
+              onSelectOrigin={(loc) => setOriginCoords({ lat: loc.lat, lng: loc.lng })}
+              onSelectDest={(loc) => setDestCoords({ lat: loc.lat, lng: loc.lng })}
+            />
 
-                <RecommendationCard recommendation={response} />
+            {/* QUICK PRESETS */}
+            <div style={{ marginTop: '24px' }}>
+              <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>
+                Quick Route Suggestions
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+                <div
+                  className="condition-card"
+                  style={{ cursor: 'pointer', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}
+                  onClick={() => handleQuery({ text: 'Generate fastest route', origin_name: 'Times Square, NY', dest_name: 'Central Park, NY' })}
+                >
+                  <div className="condition-icon" style={{ color: 'var(--primary)', background: 'var(--primary-light)', padding: '10px', borderRadius: '14px' }}>
+                    <Car size={22} />
+                  </div>
+                  <div className="condition-info" style={{ textAlign: 'left' }}>
+                    <span className="condition-label" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Times Square → Central Park</span>
+                    <span className="condition-value" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>Fastest Route</span>
+                  </div>
+                </div>
 
-                <DepartureOptimizer windows={response.departure_windows} />
+                <div
+                  className="condition-card"
+                  style={{ cursor: 'pointer', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}
+                  onClick={() => handleQuery({ text: 'Find parking near airport', origin_name: 'Downtown', dest_name: 'JFK Airport' })}
+                >
+                  <div className="condition-icon" style={{ color: 'var(--accent-emerald)', background: 'rgba(0, 245, 160, 0.12)', padding: '10px', borderRadius: '14px' }}>
+                    <ParkingCircle size={22} />
+                  </div>
+                  <div className="condition-info" style={{ textAlign: 'left' }}>
+                    <span className="condition-label" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Downtown → JFK Airport</span>
+                    <span className="condition-value" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>Smart Parking</span>
+                  </div>
+                </div>
 
-                <ExplainabilityPanel explanations={response.shap_explanations} />
-
-                <TurnByTurnGuide steps={response.turn_by_turn_steps} />
-              </div>
-
-              <div className="side-panel">
-                <LiveConditionsStrip conditions={response.live_conditions} />
-                <AlternativesList
-                  options={response.ranked_options}
-                  selectedOptionId={selectedOptionId}
-                  onSelectOption={(opt) => {
-                    setSelectedOptionId(opt.option_id);
-                    setSelectedMode(opt.mode);
-                  }}
-                />
+                <div
+                  className="condition-card"
+                  style={{ cursor: 'pointer', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}
+                  onClick={() => handleQuery({ text: 'Eco transit route', origin_name: 'Grand Central', dest_name: 'Empire State Building' })}
+                >
+                  <div className="condition-icon" style={{ color: '#c084fc', background: 'rgba(192, 132, 252, 0.12)', padding: '10px', borderRadius: '14px' }}>
+                    <Bus size={22} />
+                  </div>
+                  <div className="condition-info" style={{ textAlign: 'left' }}>
+                    <span className="condition-label" style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Grand Central → Empire State</span>
+                    <span className="condition-value" style={{ fontSize: '14px', fontWeight: 700, color: 'var(--text-primary)', display: 'block' }}>Eco Transit</span>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
-        </div>
-      )}
 
-      {/* TAB 3: URBAN AI CHATBOT */}
-      {activeTab === 'ai_chat' && (
-        <div style={{ padding: '16px', width: '100%' }}>
-          <AIChatbot onSelectRoutePrompt={(promptText) => handleQuery({ text: promptText })} />
-        </div>
-      )}
+            {/* ACTIVE ROUTE DETAILS */}
+            {response && (
+              <div style={{ marginTop: '28px' }}>
+                <h3 style={{ fontSize: '18px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <Compass size={20} color="var(--primary)" /> Active Travel Recommendation
+                </h3>
+                <div className="dashboard-content" style={{ padding: 0 }}>
+                  <div className="main-panel">
+                    <MapView
+                      conditions={response.live_conditions}
+                      originCoords={response.origin_coords || originCoords}
+                      destCoords={response.dest_coords || destCoords}
+                      originAddress={response.origin_address || originName}
+                      destAddress={response.dest_address || destName}
+                      routesGeometry={response.routes_geometry}
+                      selectedMode={selectedMode}
+                    />
 
-      {/* TAB 4: ECO ANALYTICS STATS */}
-      {activeTab === 'eco_stats' && (
-        <div style={{ padding: '16px', width: '100%' }}>
-          <EcoAnalyticsTab />
-        </div>
-      )}
+                    <EcoImpactBadge impact={response.eco_impact} />
+                    <RecommendationCard recommendation={response} />
+                    <DepartureOptimizer windows={response.departure_windows} />
+                    <ExplainabilityPanel explanations={response.shap_explanations} />
+                    <TurnByTurnGuide steps={response.turn_by_turn_steps} />
+                  </div>
+
+                  <div className="side-panel">
+                    <LiveConditionsStrip conditions={response.live_conditions} />
+                    <AlternativesList
+                      options={response.ranked_options}
+                      selectedOptionId={selectedOptionId}
+                      onSelectOption={(opt) => {
+                        setSelectedOptionId(opt.option_id);
+                        setSelectedMode(opt.mode);
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VIEW 2: DEPARTURE OPTIMIZER TAB */}
+        {activeTab === 'departure' && (
+          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Clock size={24} color="var(--primary)" /> Departure Window Optimization
+            </h2>
+            {response?.departure_windows ? (
+              <DepartureOptimizer windows={response.departure_windows} />
+            ) : (
+              <div style={{ background: 'var(--bg-surface)', padding: '40px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
+                <h3>No Route Selected</h3>
+                <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Please calculate a route on the Planner tab to view optimal departure windows.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VIEW 3: TURN-BY-TURN NAV TAB */}
+        {activeTab === 'navigation' && (
+          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Navigation size={24} color="var(--primary)" /> Turn-by-Turn Navigation Guide
+            </h2>
+            {response?.turn_by_turn_steps ? (
+              <TurnByTurnGuide steps={response.turn_by_turn_steps} />
+            ) : (
+              <div style={{ background: 'var(--bg-surface)', padding: '40px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
+                <h3>No Active Navigation</h3>
+                <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Search a route on the Planner tab to unlock turn-by-turn directions.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VIEW 4: EXPLAINABILITY & ML INSIGHTS TAB */}
+        {activeTab === 'explainability' && (
+          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+            <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <BarChart3 size={24} color="var(--primary)" /> Machine Learning SHAP Explainability
+            </h2>
+            {response?.shap_explanations ? (
+              <ExplainabilityPanel explanations={response.shap_explanations} />
+            ) : (
+              <div style={{ background: 'var(--bg-surface)', padding: '40px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
+                <h3>ML Insights Available After Search</h3>
+                <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Perform a query on the Planner tab to analyze ML feature impacts.</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* VIEW 5: URBAN AI CONCIERGE CHAT */}
+        {activeTab === 'ai_chat' && (
+          <div style={{ padding: '24px', width: '100%' }}>
+            <AIChatbot onSelectRoutePrompt={(promptText) => {
+              setActiveTab('home');
+              handleQuery({ text: promptText });
+            }} />
+          </div>
+        )}
+
+        {/* VIEW 6: ECO ANALYTICS STATS */}
+        {activeTab === 'eco_stats' && (
+          <div style={{ padding: '24px', width: '100%' }}>
+            <EcoAnalyticsTab />
+          </div>
+        )}
+      </div>
+
+      {/* GLOBAL VOICE ASSISTANT MODAL & WAKE WORD LISTENER */}
+      <VoiceAssistant
+        onVoiceRoute={handleVoiceRoute}
+        currentOrigin={originName}
+        currentDest={destName}
+        isOpen={isVoiceOpen}
+        setIsOpen={setIsVoiceOpen}
+      />
 
       {/* MOBILE BOTTOM NAVIGATION DOCK */}
-      <VoiceAssistant onVoiceRoute={handleVoiceRoute} currentOrigin={originName} currentDest={destName} />
       <MobileBottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
     </div>
   );

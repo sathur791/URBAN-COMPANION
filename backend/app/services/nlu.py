@@ -7,9 +7,11 @@ from app.core.config import get_settings
 settings = get_settings()
 
 INTENT_MAP = {
+    "general_qa": ["visiting places", "places to visit", "tourist", "spots", "attractions", "places in", "recommend places", "what to do", "best spots", "things to see", "tell me about"],
+    "dining": ["restaurant", "food", "eat", "cafe", "dining", "dishes"],
     "should_i_leave_now": ["leave now", "should i go", "when should i leave", "time to go"],
     "find_parking": ["parking", "park", "where to park", "parking spot"],
-    "best_route": ["best route", "fastest way", "how to get", "directions"],
+    "best_route": ["best route", "fastest way", "how to get", "directions", "route from"],
     "traffic_check": ["traffic", "congestion", "road conditions", "traffic status"],
     "weather_check": ["weather", "rain", "temperature", "forecast"],
     "transit_info": ["bus", "train", "subway", "transit", "public transport"],
@@ -56,6 +58,8 @@ def _keyword_fallback(text: str) -> NLUResult:
     return NLUResult(intent=best_intent, entities={}, confidence=max(0.3, min(best_score * 0.3, 0.9)))
 
 
+import os
+
 async def parse_query(req: QueryRequest) -> NLUResult:
     if not req.text:
         return NLUResult(intent="best_route", entities={
@@ -63,17 +67,37 @@ async def parse_query(req: QueryRequest) -> NLUResult:
             "destination": {"lat": req.dest_lat or 0, "lng": req.dest_lng or 0},
         }, confidence=0.7)
 
+    prompt = f"""Extract intent and entities from user query: "{req.text}"
+Return ONLY valid JSON matching this schema: {{"intent": "<one of {list(INTENT_MAP.keys())}>", "entities": {{}}, "confidence": 0.95}}"""
+
+    # 1. Try Grok API
+    grok_key = settings.GROK_API_KEY or os.getenv("GROK_API_KEY") or os.getenv("XAI_API_KEY")
+    if grok_key:
+        try:
+            async with httpx.AsyncClient(timeout=10) as client:
+                res = await client.post(
+                    f"{settings.GROK_API_URL}/chat/completions",
+                    headers={"Authorization": f"Bearer {grok_key}", "Content-Type": "application/json"},
+                    json={
+                        "model": settings.GROK_MODEL or "grok-2-latest",
+                        "messages": [{"role": "user", "content": prompt}],
+                        "response_format": {"type": "json_object"},
+                    },
+                )
+                if res.status_code == 200:
+                    output = res.json().get("choices", [{}])[0].get("message", {}).get("content", "")
+                    parsed = json.loads(output)
+                    return NLUResult(
+                        intent=parsed.get("intent", "best_route"),
+                        entities=parsed.get("entities", {}),
+                        confidence=float(parsed.get("confidence", 0.9)),
+                    )
+        except Exception:
+            pass
+
+    # 2. Try Ollama
     try:
-        prompt = f"""Extract the intent and entities from this travel query.
-Return a JSON object with "intent", "entities", and "confidence".
-
-User query: "{req.text}"
-
-Possible intents: {', '.join(INTENT_MAP.keys())}
-
-Response (JSON only):"""
-
-        async with httpx.AsyncClient(timeout=30) as client:
+        async with httpx.AsyncClient(timeout=10) as client:
             resp = await client.post(
                 f"{settings.LLM_API_URL}/api/generate",
                 json={
@@ -83,14 +107,15 @@ Response (JSON only):"""
                     "format": "json",
                 },
             )
-            resp.raise_for_status()
-            output = resp.json().get("response", "")
-            parsed = json.loads(output)
-
-            return NLUResult(
-                intent=parsed.get("intent", "best_route"),
-                entities=parsed.get("entities", {}),
-                confidence=parsed.get("confidence", 0.5),
-            )
+            if resp.status_code == 200:
+                output = resp.json().get("response", "")
+                parsed = json.loads(output)
+                return NLUResult(
+                    intent=parsed.get("intent", "best_route"),
+                    entities=parsed.get("entities", {}),
+                    confidence=parsed.get("confidence", 0.5),
+                )
     except Exception:
-        return _keyword_fallback(req.text)
+        pass
+
+    return _keyword_fallback(req.text)
