@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     OPENROUTE_API_KEY: str = ""
 
     LLM_API_URL: str = "http://localhost:11434"
+    GROK_API_KEY: str = ""
+    GROK_MODEL: str = "grok-2-latest"
+    GROK_API_URL: str = "https://api.x.ai/v1"
     MLFLOW_TRACKING_URI: str = "http://localhost:5000"
 
     USE_SQLITE: bool = True

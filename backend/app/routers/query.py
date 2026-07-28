@@ -1,7 +1,8 @@
-from fastapi import APIRouter, Depends, Query as QueryParam
+from fastapi import APIRouter, Depends, Query as QueryParam, Request
+import os
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.database import get_db
-from app.core.security import get_current_user
+from app.core.security import get_current_user, get_optional_user
 from app.models.db_models import User, Trip
 from app.models.schemas import QueryRequest, QueryResponse
 from app.services.nlu import parse_query
@@ -28,9 +29,13 @@ async def autocomplete_search(q: str = QueryParam(..., min_length=2)):
 @router.post("/query", response_model=QueryResponse)
 async def handle_query(
     req: QueryRequest,
-    current_user: User = Depends(get_current_user),
+    request: Request = None,
+    current_user: User = Depends(get_optional_user),
     db: AsyncSession = Depends(get_db),
 ):
+    if request and request.headers.get("x-grok-key"):
+        os.environ["GROK_API_KEY"] = request.headers.get("x-grok-key").strip()
+
     nlu = await parse_query(req)
 
     # Resolve Origin Coordinates & Address
