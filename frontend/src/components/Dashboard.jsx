@@ -15,9 +15,11 @@ import AIChatbot from './AIChatbot';
 import MobileBottomNav from './MobileBottomNav';
 import EmergencySOSModal from './EmergencySOSModal';
 import EcoAnalyticsTab from './EcoAnalyticsTab';
+import WakeWordListener from './WakeWordListener';
+import VoiceBotModal from './VoiceBotModal';
 
 import { query as queryApi } from '../api';
-import { Compass, Moon, Sun, User, Share2, Car, Bus, ParkingCircle, ShieldAlert, Sparkles, Flame, Zap } from 'lucide-react';
+import { Compass, Moon, Sun, User, Share2, Car, Bus, ParkingCircle, ShieldAlert, Sparkles, Flame, Zap, Mic } from 'lucide-react';
 
 export default function Dashboard({ onLogout, theme, toggleTheme }) {
   const [response, setResponse] = useState(null);
@@ -26,6 +28,16 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
   const [sosModalOpen, setSosModalOpen] = useState(false);
+
+  // Voice AI Assistant Pop-up & Wake Word State
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
+  const [voiceInitialQuery, setVoiceInitialQuery] = useState('');
+  const [wakeWordActive, setWakeWordActive] = useState(true);
+
+  const handleWakeWordDetected = useCallback((query) => {
+    setVoiceInitialQuery(query || '');
+    setVoiceModalOpen(true);
+  }, []);
 
   // Mobile Bottom Navigation Tab state ('home', 'routes', 'ai_chat', 'eco_stats', 'profile')
   const [activeTab, setActiveTab] = useState('home');
@@ -98,6 +110,13 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
         </div>
 
         <div className="header-right">
+          {/* VOICE WAKE-WORD LISTENER STATUS BADGE */}
+          <WakeWordListener
+            isActive={wakeWordActive && !voiceModalOpen}
+            onToggleActive={() => setWakeWordActive(!wakeWordActive)}
+            onWakeWordDetected={handleWakeWordDetected}
+          />
+
           {/* EMERGENCY SOS SAFETY TRIGGER */}
           <button className="icon-btn sos-header-btn" onClick={() => setSosModalOpen(true)} title="Emergency SOS">
             <ShieldAlert size={18} /> SOS
@@ -364,6 +383,29 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
       {/* MOBILE BOTTOM NAVIGATION DOCK */}
       <MobileBottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
+
+      {/* URBAN AI VOICE BOT OVERLAY MODAL */}
+      <VoiceBotModal
+        isOpen={voiceModalOpen}
+        onClose={() => setVoiceModalOpen(false)}
+        initialQuery={voiceInitialQuery}
+        onActionTrigger={(promptText) => handleQuery({ text: promptText })}
+      />
+
+      {/* FLOATING VOICE ASSISTANT BUTTON */}
+      <button
+        type="button"
+        className="floating-voice-btn"
+        onClick={() => {
+          setVoiceInitialQuery('');
+          setVoiceModalOpen(true);
+        }}
+        title="Activate Voice AI Assistant ('Say Urban AI')"
+      >
+        <span className="pulse-ring" />
+        <Mic size={22} color="#ffffff" />
+        <span className="floating-voice-label">Urban AI Voice</span>
+      </button>
     </div>
   );
 }
