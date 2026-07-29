@@ -11,7 +11,7 @@ from app.core.database import get_db
 from app.models.db_models import User
 
 settings = get_settings()
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login", auto_error=False)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
@@ -31,16 +31,21 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
-    if token == "guest_demo_token":
-        result = await db.execute(select(User).where(User.username == "demo_guest"))
-        demo_user = result.scalar_one_or_none()
-        if not demo_user:
-            demo_user = User(username="demo_guest", email="guest@urbancompanion.io", hashed_password="")
-            db.add(demo_user)
-            await db.commit()
-            await db.refresh(demo_user)
-        return demo_user
+
+async def get_guest_user(db: AsyncSession) -> User:
+    result = await db.execute(select(User).where(User.username == "demo_guest"))
+    demo_user = result.scalar_one_or_none()
+    if not demo_user:
+        demo_user = User(username="demo_guest", email="guest@urbancompanion.io", hashed_password="")
+        db.add(demo_user)
+        await db.commit()
+        await db.refresh(demo_user)
+    return demo_user
+
+
+async def get_current_user(token: Optional[str] = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
+    if not token or token == "guest_demo_token":
+        return await get_guest_user(db)
 
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -62,5 +67,13 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession
     result = await db.execute(select(User).where(User.id == user_id))
     user = result.scalar_one_or_none()
     if user is None:
-        raise credentials_exception
+        return await get_guest_user(db)
     return user
+
+
+async def get_optional_user(token: Optional[str] = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
+    try:
+        return await get_current_user(token, db)
+    except HTTPException:
+        return await get_guest_user(db)
+

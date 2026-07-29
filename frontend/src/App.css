@@ -2316,3 +2316,10 @@ button {
   cursor: not-allowed;
 }
 
+@media (max-width: 900px) {
+  .main-app-content {
+    margin-left: 0 !important;
+    padding-bottom: 70px;
+  }
+}
+

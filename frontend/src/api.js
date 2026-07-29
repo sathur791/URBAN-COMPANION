@@ -7,6 +7,8 @@ const api = axios.create({ baseURL: API_BASE });
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('token');
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  const grokKey = localStorage.getItem('grok_api_key');
+  if (grokKey) config.headers['X-Grok-Key'] = grokKey;
   return config;
 });
 
