@@ -393,18 +393,53 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
           </div>
         )}
 
-        {/* VIEW 3: TURN-BY-TURN NAV TAB */}
-        {activeTab === 'navigation' && (
+        {/* VIEW 3: ROUTES & TURN-BY-TURN NAV TAB */}
+        {(activeTab === 'navigation' || activeTab === 'routes') && (
           <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <Navigation size={24} color="var(--primary)" /> Turn-by-Turn Navigation Guide
+              <Navigation size={24} color="var(--primary)" /> Turn-by-Turn Routes & Navigation Guide
             </h2>
-            {response?.turn_by_turn_steps ? (
-              <TurnByTurnGuide steps={response.turn_by_turn_steps} />
+            {response ? (
+              <div className="dashboard-content" style={{ padding: 0 }}>
+                <div className="main-panel">
+                  <MapView
+                    conditions={response.live_conditions}
+                    originCoords={response.origin_coords || originCoords}
+                    destCoords={response.dest_coords || destCoords}
+                    originAddress={response.origin_address || originName}
+                    destAddress={response.dest_address || destName}
+                    routesGeometry={response.routes_geometry}
+                    selectedMode={selectedMode}
+                  />
+                  <TurnByTurnGuide steps={response.turn_by_turn_steps} />
+                </div>
+                <div className="side-panel">
+                  <LiveConditionsStrip conditions={response.live_conditions} />
+                  <AlternativesList
+                    options={response.ranked_options}
+                    selectedOptionId={selectedOptionId}
+                    onSelectOption={(opt) => {
+                      setSelectedOptionId(opt.option_id);
+                      setSelectedMode(opt.mode);
+                    }}
+                  />
+                </div>
+              </div>
             ) : (
               <div style={{ background: 'var(--bg-surface)', padding: '40px', borderRadius: '20px', textAlign: 'center', border: '1px solid var(--border-color)' }}>
-                <h3>No Active Navigation</h3>
-                <p style={{ color: 'var(--text-muted)', marginTop: '8px' }}>Search a route on the Planner tab to unlock turn-by-turn directions.</p>
+                <Navigation size={42} style={{ color: 'var(--primary)', marginBottom: '12px' }} />
+                <h3 style={{ fontSize: '18px', fontWeight: 700 }}>No Active Route Selected</h3>
+                <p style={{ color: 'var(--text-muted)', marginTop: '8px', marginBottom: '20px' }}>Calculate a route on the Planner tab or click below to generate an instant route recommendation.</p>
+                <button
+                  className="send-btn"
+                  style={{ display: 'inline-flex', width: 'auto', padding: '12px 24px', margin: '0 auto' }}
+                  onClick={() => {
+                    setActiveTab('home');
+                    handleQuery({ text: 'Generate fastest route', origin_name: originName, dest_name: destName });
+                  }}
+                >
+                  <Navigation size={18} /> Calculate Route Now
+                </button>
               </div>
             )}
           </div>
