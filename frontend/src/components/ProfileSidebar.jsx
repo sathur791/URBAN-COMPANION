@@ -95,7 +95,7 @@ export default function ProfileSidebar({ open, onClose, onLogout, onReQuery }) {
               <button
                 type="submit"
                 style={{
-                  background: 'linear-gradient(135deg, #00f2fe 0%, #7928ca 100%)',
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
                   color: '#ffffff',
                   border: 'none',
                   borderRadius: '12px',

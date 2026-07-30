@@ -6,14 +6,14 @@
   width: 60px;
   height: 60px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #00f2fe 0%, #7928ca 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%);
   color: #ffffff;
   border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(0, 242, 254, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px var(--primary-glow), 0 0 0 1px rgba(255, 255, 255, 0.1);
   z-index: 1050;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -30,7 +30,7 @@
   right: -6px;
   bottom: -6px;
   border-radius: 50%;
-  border: 2px solid rgba(0, 242, 254, 0.5);
+  border: 2px solid var(--primary-glow);
   animation: fab-aura-pulse 2.5s infinite ease-in-out;
   pointer-events: none;
 }
@@ -47,8 +47,8 @@
 }
 
 .voice-assistant-fab.speaking {
-  background: linear-gradient(135deg, #00f5a0 0%, #00f2fe 100%);
-  box-shadow: 0 10px 35px rgba(0, 245, 160, 0.6);
+  background: linear-gradient(135deg, var(--accent-emerald) 0%, var(--primary) 100%);
+  box-shadow: 0 10px 35px var(--primary-glow);
 }
 
 .fab-icon-active {
@@ -325,7 +325,7 @@
 }
 
 .tap-to-speak-btn {
-  background: linear-gradient(135deg, #00f2fe 0%, #7928ca 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%);
   color: #ffffff;
   border: none;
   border-radius: 14px;
@@ -336,7 +336,7 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 242, 254, 0.25);
+  box-shadow: 0 4px 12px var(--primary-glow);
   transition: transform 0.15s ease;
 }
 
