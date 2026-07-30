@@ -1,12 +1,13 @@
-import { Home, MapPin, Bot, Leaf, User } from 'lucide-react';
+import { Home, Map, Mic, AlertCircle, User } from 'lucide-react';
+import './MobileBottomNav.css';
 
 export default function MobileBottomNav({ activeTab, setActiveTab }) {
   const navItems = [
-    { id: 'home', label: 'Home', icon: Home },
-    { id: 'routes', label: 'Routes', icon: MapPin },
-    { id: 'ai_chat', label: 'Urban AI', icon: Bot, badge: 'AI' },
-    { id: 'eco_stats', label: 'Eco Stats', icon: Leaf },
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'home', label: 'முகப்பு', icon: Home },
+    { id: 'map', label: 'வரைபடம்', icon: Map },
+    { id: 'ai_chat', label: 'AI குரல்', icon: Mic, hasBadge: true },
+    { id: 'complaints', label: 'புகார்கள்', icon: AlertCircle },
+    { id: 'profile', label: 'சுயவிவரம்', icon: User },
   ];
 
   return (
@@ -17,12 +18,12 @@ export default function MobileBottomNav({ activeTab, setActiveTab }) {
         return (
           <button
             key={item.id}
-            className={`nav-item ${isActive ? 'active' : ''}`}
+            className={`mobile-bottom-nav-item ${isActive ? 'active' : ''}`}
             onClick={() => setActiveTab(item.id)}
           >
-            <div className="icon-container">
+            <div className="icon-wrapper">
               <Icon size={20} />
-              {item.badge && <span className="nav-badge">{item.badge}</span>}
+              {item.hasBadge && !isActive && <span className="badge-dot" />}
             </div>
             <span className="nav-label">{item.label}</span>
           </button>

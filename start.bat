@@ -4,7 +4,11 @@ echo   Urban Companion - Starting Services
 echo ============================================
 echo.
 
-set "NODE_DIR=C:\Users\varun\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin"
+set "NODE_DIR=C:\Users\varun\AppData\Local\OpenAI\Codex\runtimes\cua_node\1b23c930bdf84ed6\bin"
+if not exist "%NODE_DIR%" (
+    set "NODE_DIR=C:\Users\varun\.cache\codex-runtimes\codex-primary-runtime\dependencies\node\bin"
+)
+
 if exist "%NODE_DIR%" (
     set "PATH=%NODE_DIR%;%PATH%"
 )

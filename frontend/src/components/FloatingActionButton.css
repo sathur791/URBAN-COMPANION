@@ -1,0 +1,83 @@
+.fab-container {
+  position: fixed;
+  bottom: 84px;
+  right: 24px;
+  z-index: 990;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-end;
+  gap: 12px;
+}
+
+@media (min-width: 1024px) {
+  .fab-container {
+    bottom: 28px;
+    right: 28px;
+  }
+}
+
+.fab-main-btn {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--gradient-fire);
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 25px rgba(229, 57, 53, 0.6);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.fab-main-btn:hover {
+  transform: scale(1.08) rotate(90deg);
+  box-shadow: 0 12px 35px rgba(251, 140, 0, 0.8);
+}
+
+.fab-main-btn.open {
+  transform: rotate(45deg);
+  background: #1e1e24;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.fab-options-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.fab-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(18, 20, 31, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 8px 16px;
+  border-radius: 99px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+  transition: all 0.2s ease;
+}
+
+.fab-option-btn:hover {
+  background: var(--gradient-fire);
+  transform: translateX(-4px);
+}
+
+.fab-option-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

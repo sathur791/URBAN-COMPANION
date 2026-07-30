@@ -1,0 +1,127 @@
+.complaint-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 24px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.upload-dropzone {
+  border: 2px dashed rgba(251, 140, 0, 0.4);
+  background: rgba(18, 20, 31, 0.7);
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--primary-red);
+  background: rgba(18, 20, 31, 0.9);
+  box-shadow: 0 0 30px rgba(229, 57, 53, 0.25);
+}
+
+.ai-scan-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-fire);
+  box-shadow: 0 0 15px var(--primary-red);
+  animation: scanLine 2s ease-in-out infinite;
+}
+
+.upload-action-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.upload-btn:hover {
+  background: var(--gradient-fire);
+  border-color: transparent;
+}
+
+/* AI Analysis Result Card */
+.ai-analysis-card {
+  background: radial-gradient(circle at 10% 10%, rgba(251, 140, 0, 0.15) 0%, transparent 50%), #12141f;
+  border: 1px solid rgba(251, 140, 0, 0.3);
+  border-radius: 24px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.severity-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* Timeline Layout */
+.timeline-tracker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16px;
+  position: relative;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  z-index: 2;
+}
+
+.timeline-dot {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1b1f2e;
+  border: 2px solid #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.timeline-step.completed .timeline-dot {
+  background: var(--gradient-fire);
+  border-color: #fdd835;
+  color: white;
+}

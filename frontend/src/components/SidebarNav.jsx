@@ -1,43 +1,77 @@
 import React from 'react';
-import { 
-  Compass, 
-  Mic, 
-  Bot, 
-  Leaf, 
-  Clock, 
-  Navigation, 
-  BarChart3, 
-  User, 
-  ShieldAlert, 
-  Sun, 
-  Moon, 
+import {
+  LayoutDashboard,
+  Bot,
+  AlertCircle,
+  Landmark,
+  ShieldAlert,
+  Car,
+  ParkingCircle,
+  Bus,
+  Sun,
+  Leaf,
+  BarChart3,
+  Bell,
+  Trophy,
+  Settings,
+  HelpCircle,
+  Info,
   LogOut,
-  Sparkles,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Moon,
+  Sparkles,
+  MapPin
 } from 'lucide-react';
 import './SidebarNav.css';
 
-export default function SidebarNav({ 
-  activeTab, 
-  setActiveTab, 
-  isCollapsed, 
+export default function SidebarNav({
+  activeTab,
+  setActiveTab,
+  isCollapsed,
   setIsCollapsed,
   onOpenSos,
-  onOpenProfile,
   theme,
   toggleTheme,
   onLogout
 }) {
-  const navItems = [
-    { id: 'home', label: 'Planner & Map', icon: Compass, badge: 'Live' },
-    { id: 'voice', label: 'Voice AI Agent', icon: Mic, badge: 'Wake Word' },
-    { id: 'ai_chat', label: 'AI Concierge', icon: Bot, badge: 'Grok 2' },
-    { id: 'eco_stats', label: 'Eco Analytics', icon: Leaf },
-    { id: 'departure', label: 'Departure Window', icon: Clock },
-    { id: 'navigation', label: 'Turn-by-Turn', icon: Navigation },
-    { id: 'explainability', label: 'ML Insights', icon: BarChart3 },
-    { id: 'profile', label: 'User Profile', icon: User },
+  const menuSections = [
+    {
+      title: 'கட்டளை & AI (Command & AI)',
+      items: [
+        { id: 'home', label: 'முகப்பு (Dashboard)', icon: LayoutDashboard },
+        { id: 'ai_chat', label: 'AI உதவி (AI Assistant)', icon: Bot, badge: 'தமிழ் AI' },
+        { id: 'complaints', label: 'புகார்கள் (Complaints)', icon: AlertCircle },
+      ]
+    },
+    {
+      title: 'சேவைகள் & போக்குவரத்து (Services & Mobility)',
+      items: [
+        { id: 'gov_services', label: 'அரசு சேவைகள் (e-Sevai)', icon: Landmark },
+        { id: 'emergency', label: '108 அவசரம் (Emergency)', icon: ShieldAlert },
+        { id: 'traffic', label: 'போக்குவரத்து (Traffic)', icon: Car },
+        { id: 'parking', label: 'பார்க்கிங் (Parking)', icon: ParkingCircle },
+        { id: 'transit', label: 'MTC & CMRL பஸ்/மெட்ரோ', icon: Bus },
+      ]
+    },
+    {
+      title: 'தரவு & பகுப்பாய்வு (Vitals & Analytics)',
+      items: [
+        { id: 'weather', label: 'வானிலை (Weather)', icon: Sun },
+        { id: 'environment', label: 'சுற்றுச்சூழல் (AQI)', icon: Leaf },
+        { id: 'analytics', label: 'பகுப்பாய்வு (Analytics)', icon: BarChart3 },
+        { id: 'notifications', label: 'அறிவிப்புகள் (Notifs)', icon: Bell, badge: 'TN Live' },
+        { id: 'rewards', label: 'விருதுகள் (Rewards)', icon: Trophy },
+      ]
+    },
+    {
+      title: 'அமைப்புகள் (System)',
+      items: [
+        { id: 'settings', label: 'அமைப்புகள் (Settings)', icon: Settings },
+        { id: 'help', label: 'உதவி (Help)', icon: HelpCircle },
+        { id: 'about', label: 'பற்றி (About)', icon: Info },
+      ]
+    }
   ];
 
   return (
@@ -45,88 +79,90 @@ export default function SidebarNav({
       {/* BRAND LOGO HEADER */}
       <div className="sidebar-header">
         <div className="brand-badge">
-          <Sparkles size={20} className="brand-glow-icon" />
+          <Sparkles size={22} />
         </div>
         {!isCollapsed && (
           <div className="brand-details">
-            <h2 className="brand-name">URBAN COMPANION</h2>
-            <span className="brand-sub">AI Mobility Operating System</span>
+            <h2 className="brand-name">TN SMART CITY OS</h2>
+            <span className="brand-sub">தமிழ்நாடு நகர்ப்புற சேவை</span>
           </div>
         )}
-        <button 
+        <button
           className="collapse-toggle-btn"
           onClick={() => setIsCollapsed(!isCollapsed)}
-          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          title={isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
         >
           {isCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
         </button>
       </div>
 
-      {/* GROK ENGINE BADGE */}
-      {!isCollapsed && (
-        <div className="grok-engine-pill">
-          <span className="grok-pulse-dot"></span>
-          <span>Grok AI Engine Active</span>
-        </div>
-      )}
-
-      {/* NAVIGATION ITEMS LIST */}
+      {/* SIDEBAR NAVIGATION ITEMS */}
       <nav className="sidebar-menu">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = activeTab === item.id;
-          return (
-            <button
-              key={item.id}
-              className={`sidebar-link ${isActive ? 'active' : ''}`}
-              onClick={() => setActiveTab(item.id)}
-              title={isCollapsed ? item.label : undefined}
-            >
-              <div className="link-icon-container">
-                <Icon size={20} />
-              </div>
-              {!isCollapsed && (
-                <>
-                  <span className="link-label">{item.label}</span>
-                  {item.badge && <span className="link-badge">{item.badge}</span>}
-                </>
-              )}
-            </button>
-          );
-        })}
+        {menuSections.map((section, idx) => (
+          <React.Fragment key={idx}>
+            {!isCollapsed && <div className="sidebar-section-label">{section.title}</div>}
+            {section.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  className={`sidebar-link ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    if (item.id === 'emergency') {
+                      onOpenSos && onOpenSos();
+                    } else {
+                      setActiveTab(item.id);
+                    }
+                  }}
+                  title={isCollapsed ? item.label : undefined}
+                >
+                  <div className="link-icon-container">
+                    <Icon size={18} />
+                  </div>
+                  {!isCollapsed && (
+                    <>
+                      <span className="link-label">{item.label}</span>
+                      {item.badge && <span className="link-badge">{item.badge}</span>}
+                    </>
+                  )}
+                </button>
+              );
+            })}
+          </React.Fragment>
+        ))}
       </nav>
 
-      {/* SIDEBAR FOOTER ACTIONS */}
+      {/* FOOTER ACTIONS */}
       <div className="sidebar-footer">
-        {/* SOS EMERGENCY BUTTON */}
-        <button 
+        <button
           className="sidebar-action-btn sos-btn"
           onClick={onOpenSos}
-          title="Emergency Safety SOS"
+          title="Emergency 108 Safety SOS"
         >
           <ShieldAlert size={18} />
-          {!isCollapsed && <span>Emergency SOS</span>}
+          {!isCollapsed && <span style={{ marginLeft: 8 }}>108 அவசரம் (SOS)</span>}
         </button>
 
-        {/* THEME TOGGLE */}
-        <button 
+        <button
           className="sidebar-action-btn"
           onClick={toggleTheme}
-          title={theme === 'dark' ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          title={theme === 'dark' ? 'Switch to Light Theme' : 'Switch to Obsidian Dark'}
         >
           {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
-          {!isCollapsed && <span>{theme === 'dark' ? 'Light Theme' : 'Obsidian Theme'}</span>}
+          {!isCollapsed && (
+            <span style={{ marginLeft: 8 }}>{theme === 'dark' ? 'Light Theme' : 'Obsidian Theme'}</span>
+          )}
         </button>
 
-        {/* LOGOUT */}
         {onLogout && (
-          <button 
+          <button
             className="sidebar-action-btn logout-btn"
             onClick={onLogout}
             title="Log Out"
           >
             <LogOut size={18} />
-            {!isCollapsed && <span>Log Out</span>}
+            {!isCollapsed && <span style={{ marginLeft: 8 }}>வெளியேறு (Logout)</span>}
           </button>
         )}
       </div>

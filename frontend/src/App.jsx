@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import Dashboard from './components/Dashboard';
 import LoginPage from './components/LoginPage';
 import InstallPWA from './components/InstallPWA';
+import SplashScreen from './components/SplashScreen';
 import './App.css';
 
 function App() {
-  const [token, setToken] = useState(localStorage.getItem('token'));
-  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
+  const [showSplash, setShowSplash] = useState(true);
+  const [token, setToken] = useState(localStorage.getItem('token') || 'demo_smart_city_token');
+  const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -36,6 +38,10 @@ function App() {
     localStorage.removeItem('token');
     setToken(null);
   };
+
+  if (showSplash) {
+    return <SplashScreen onFinish={() => setShowSplash(false)} />;
+  }
 
   return (
     <>
