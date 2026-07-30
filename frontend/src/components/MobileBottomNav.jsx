@@ -1,10 +1,10 @@
-import { Home, MapPin, Bot, Leaf, User } from 'lucide-react';
+import { Home, MapPin, Mic, Leaf, User } from 'lucide-react';
 
 export default function MobileBottomNav({ activeTab, setActiveTab }) {
   const navItems = [
     { id: 'home', label: 'Home', icon: Home },
     { id: 'routes', label: 'Routes', icon: MapPin },
-    { id: 'ai_chat', label: 'Urban AI', icon: Bot, badge: 'AI' },
+    { id: 'ai_chat', label: 'Voice AI', icon: Mic, badge: 'Voice' },
     { id: 'eco_stats', label: 'Eco Stats', icon: Leaf },
     { id: 'profile', label: 'Profile', icon: User },
   ];

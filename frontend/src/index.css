@@ -10,33 +10,34 @@
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Obsidian Onyx Black Theme Palette (Default & Dark) */
-  --bg-main: #06070a;            /* Pure Obsidian Black */
-  --bg-surface: #0e1017;         /* Dark Onyx Card Surface */
-  --bg-surface-elevated: #141722;/* Elevated Metallic Slate */
-  --bg-glass: rgba(14, 16, 23, 0.82);
-  --border-color: rgba(255, 255, 255, 0.10);
-  --border-subtle: rgba(255, 255, 255, 0.05);
+  /* FRESH EMERALD MINT & VELVET VIOLET PALETTE (Dark / Velvet Mode) */
+  --bg-main: #0a110e;            /* Deep Rich Charcoal Mint (Not black/blue!) */
+  --bg-surface: #121d19;         /* Polished Emerald Surface */
+  --bg-surface-elevated: #192923;/* Elevated Velvet Mint Surface */
+  --bg-glass: rgba(18, 29, 25, 0.88);
+  --border-color: rgba(16, 185, 129, 0.20);
+  --border-subtle: rgba(16, 185, 129, 0.10);
 
-  --text-primary: #f8fafc;       /* Crisp Platinum White */
-  --text-secondary: #94a3b8;     /* Muted Silver Slate */
-  --text-muted: #64748b;         /* Dark Silver */
+  --text-primary: #f0fdf4;       /* Crisp Mint White */
+  --text-secondary: #a7f3d0;     /* Soft Mint Slate */
+  --text-muted: #6ee7b7;         /* Cool Emerald Muted */
 
-  --primary: #00f2fe;            /* Electric Neon Cyan */
-  --primary-hover: #00c6ff;
-  --primary-light: rgba(0, 242, 254, 0.12);
-  --primary-glow: rgba(0, 242, 254, 0.35);
+  --primary: #10b981;            /* Fresh Emerald Mint Green */
+  --primary-hover: #059669;
+  --primary-light: rgba(16, 185, 129, 0.15);
+  --primary-glow: rgba(16, 185, 129, 0.40);
 
-  --accent-violet: #7928ca;      /* Deep Electric Violet */
-  --accent-purple: #9333ea;      /* Neon Purple */
-  --accent-teal: #0d9488;        /* Cyber Teal */
-  --accent-emerald: #00f5a0;     /* Neon Emerald */
-  --accent-amber: #f59e0b;       /* Vibrant Gold */
-  --accent-rose: #ff2a5f;        /* Neon Rose */
+  --accent-violet: #8b5cf6;      /* Velvet Royal Purple */
+  --accent-purple: #a855f7;      /* Vivid Purple */
+  --accent-teal: #14b8a6;        /* Cyber Teal */
+  --accent-emerald: #10b981;     /* Mint Emerald */
+  --accent-amber: #f59e0b;       /* Warm Gold */
+  --accent-rose: #f43f5e;        /* Coral Pink */
 
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.7);
-  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.85);
+  --shadow-sm: 0 4px 14px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 10px 32px rgba(10, 17, 14, 0.65);
+  --shadow-lg: 0 24px 56px rgba(10, 17, 14, 0.85);
+  --shadow-glow: 0 0 28px rgba(16, 185, 129, 0.28);
 
   --radius-sm: 10px;
   --radius-md: 18px;
@@ -45,21 +46,26 @@
 }
 
 [data-theme='light'] {
-  --bg-main: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #f1f5f9;
-  --bg-glass: rgba(255, 255, 255, 0.90);
-  --border-color: rgba(0, 0, 0, 0.09);
-  --border-subtle: rgba(0, 0, 0, 0.04);
+  --bg-main: #f2f9f5;            /* Ultra Fresh Light Mint Cream (No plain white/blue) */
+  --bg-surface: #ffffff;         /* Pure Clean White Card */
+  --bg-surface-elevated: #e6f4ec;/* Soft Elevated Mint Surface */
+  --bg-glass: rgba(255, 255, 255, 0.94);
+  --border-color: rgba(5, 150, 105, 0.15);
+  --border-subtle: rgba(5, 150, 105, 0.08);
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #94a3b8;
+  --text-primary: #064e3b;       /* Deep Forest Emerald Text */
+  --text-secondary: #047857;     /* Vibrant Emerald Slate */
+  --text-muted: #10b981;         /* Mint Muted */
 
-  --primary: #0284c7;
-  --primary-hover: #0369a1;
-  --primary-light: rgba(2, 132, 199, 0.08);
-  --primary-glow: rgba(2, 132, 199, 0.25);
+  --primary: #059669;            /* Deep Mint Green */
+  --primary-hover: #047857;
+  --primary-light: rgba(5, 150, 105, 0.12);
+  --primary-glow: rgba(5, 150, 105, 0.30);
+
+  --shadow-sm: 0 4px 12px rgba(6, 78, 59, 0.06);
+  --shadow-md: 0 12px 30px rgba(6, 78, 59, 0.10);
+  --shadow-lg: 0 24px 48px rgba(6, 78, 59, 0.15);
+  --shadow-glow: 0 0 20px rgba(5, 150, 105, 0.22);
 }
 
 body {
@@ -78,7 +84,7 @@ body {
   min-height: 100vh;
 }
 
-/* Custom Scrollbar for sleek obsidian look */
+/* Custom Scrollbar for sleek emerald look */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -87,7 +93,7 @@ body {
   background: var(--bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(16, 185, 129, 0.25);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

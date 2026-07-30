@@ -6,7 +6,7 @@ import {
 import axios from 'axios';
 
 export default function VoiceBotModal({ isOpen, onClose, initialQuery, onActionTrigger }) {
-  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const apiKey = import.meta.env.VITE_GROK_API_KEY || localStorage.getItem('grok_api_key') || import.meta.env.VITE_GEMINI_API_KEY;
 
   const [status, setStatus] = useState('idle'); // 'listening' | 'processing' | 'speaking' | 'idle' | 'error'
   const [transcript, setTranscript] = useState('');
@@ -116,38 +116,46 @@ export default function VoiceBotModal({ isOpen, onClose, initialQuery, onActionT
     try {
       let replyText = '';
       if (apiKey) {
-        const systemPrompt = `You are Urban AI Voice Assistant, an intelligent, friendly urban companion and travel guide.
+        const systemPrompt = `You are Urban AI Voice Assistant powered by xAI Grok, an intelligent, friendly urban companion and travel guide.
 Keep responses concise, direct, helpful, and formatted for voice output.
 Provide clear travel recommendations, route insights, safety advice, food stops, or hotel recommendations.
 Limit responses to 2-4 short sentences or structured bullet points unless the user requests detailed explanations.`;
 
-        const contents = [
-          { role: 'user', parts: [{ text: `System Prompt: ${systemPrompt}` }] },
-          { role: 'model', parts: [{ text: "Hello! I am Urban AI, ready to assist with your urban journey, routes, and local recommendations!" }] },
+        const messagesPayload = [
+          { role: 'system', content: systemPrompt },
         ];
 
-        // Include recent history
         chatHistory.slice(-4).forEach((m) => {
-          contents.push({
-            role: m.sender === 'user' ? 'user' : 'model',
-            parts: [{ text: m.text }],
+          messagesPayload.push({
+            role: m.sender === 'user' ? 'user' : 'assistant',
+            content: m.text,
           });
         });
 
-        contents.push({
+        messagesPayload.push({
           role: 'user',
-          parts: [{ text: queryText }],
+          content: queryText,
         });
 
-        const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const endpoint = 'https://api.x.ai/v1/chat/completions';
 
         const res = await axios.post(
           endpoint,
-          { contents },
-          { headers: { 'Content-Type': 'application/json' } }
+          {
+            model: 'grok-2-latest',
+            messages: messagesPayload,
+            temperature: 0.7,
+            max_tokens: 400,
+          },
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${apiKey.trim()}`,
+            },
+          }
         );
 
-        replyText = res.data?.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't process your request right now. Please try again!";
+        replyText = res.data?.choices?.[0]?.message?.content || "I couldn't process your request right now. Please try again!";
       } else {
         // Intelligent offline concierge fallback
         if (queryText.toLowerCase().includes('hotel') || queryText.toLowerCase().includes('stay')) {
@@ -279,7 +287,7 @@ Limit responses to 2-4 short sentences or structured bullet points unless the us
         {
           id: 'welcome-voice',
           sender: 'bot',
-          text: "👋 Hi! I am **Urban AI Voice Concierge**.\n\nSay your question aloud or tap quick topics below!",
+          text: "👋 Hi! I am **Urban AI Voice Companion**.\n\nSay your question aloud or tap quick topics below!",
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);

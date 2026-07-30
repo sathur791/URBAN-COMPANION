@@ -131,10 +131,10 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
         className="main-app-content"
       >
         {/* HEADER BAR */}
-        <header className="dashboard-header" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'rgba(6, 7, 10, 0.85)', backdropFilter: 'blur(16px)' }}>
+        <header className="dashboard-header" style={{ position: 'sticky', top: 0, zIndex: 100, background: 'var(--bg-glass)', backdropFilter: 'blur(20px)' }}>
           <div className="header-left">
             <div className="brand-title-group">
-              <h1 style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 0%, #00f2fe 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+              <h1 style={{ fontSize: '18px', fontWeight: 800, letterSpacing: '-0.02em', background: 'linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                 Urban Companion
               </h1>
               <div className="live-tag" style={{ fontSize: '11px' }}>
@@ -203,16 +203,16 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
         {/* VIEW 1: PLANNER & MAP DASHBOARD */}
         {activeTab === 'home' && !loading && (
-          <div style={{ padding: '24px', maxWidth: '1600px', margin: '0 auto', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1440px', margin: '0 auto', width: '100%' }}>
             {/* HERO BANNER */}
             <div style={{
-              background: 'linear-gradient(135deg, rgba(14, 16, 23, 0.9) 0%, rgba(20, 23, 34, 0.95) 100%)',
+              background: 'linear-gradient(135deg, var(--bg-surface) 0%, var(--bg-surface-elevated) 100%)',
               borderRadius: '24px',
-              padding: '28px',
-              color: '#ffffff',
+              padding: '28px 32px',
+              color: 'var(--text-primary)',
               marginBottom: '24px',
-              border: '1px solid rgba(0, 242, 254, 0.25)',
-              boxShadow: '0 20px 48px rgba(0, 0, 0, 0.6), 0 0 30px rgba(0, 242, 254, 0.12)',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-md), var(--shadow-glow)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -233,40 +233,40 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
                 <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.12em' }}>
                   OBSIDIAN EDITION • GROK AI POWERED
                 </div>
-                <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '8px 0 10px 0', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 0%, #00f2fe 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <h2 style={{ fontSize: '24px', fontWeight: 800, margin: '8px 0 10px 0', letterSpacing: '-0.02em', background: 'linear-gradient(135deg, #ffffff 0%, var(--primary) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
                   Where would you like to explore?
                 </h2>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '13px' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: '#f8fafc' }}>
-                    <Flame size={15} color="#ff2a5f" /> 7 Day Eco Streak
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <Flame size={15} color="var(--accent-rose)" /> 7 Day Eco Streak
                   </span>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255, 255, 255, 0.06)', border: '1px solid rgba(255, 255, 255, 0.1)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: '#f8fafc' }}>
-                    <Zap size={15} color="#f59e0b" /> 34.8kg CO₂ Saved
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'var(--bg-main)', border: '1px solid var(--border-color)', padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: 'var(--text-primary)' }}>
+                    <Zap size={15} color="var(--accent-amber)" /> 34.8kg CO₂ Saved
                   </span>
                 </div>
               </div>
               <button
                 onClick={() => setActiveTab('ai_chat')}
                 style={{
-                  background: 'linear-gradient(135deg, #00f2fe 0%, #7928ca 100%)',
-                  color: '#ffffff',
+                  background: 'linear-gradient(135deg, var(--primary) 0%, var(--accent-violet) 100%)',
+                  color: '#070913',
                   border: 'none',
                   borderRadius: '18px',
-                  padding: '14px 22px',
+                  padding: '14px 24px',
                   fontWeight: 800,
                   fontSize: '14px',
                   cursor: 'pointer',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '10px',
-                  boxShadow: '0 8px 24px rgba(0, 242, 254, 0.35)',
+                  boxShadow: '0 8px 24px var(--primary-glow)',
                   whiteSpace: 'nowrap',
                   position: 'relative',
                   zIndex: 1,
                   transition: 'transform 0.2s ease, boxShadow 0.2s ease'
                 }}
               >
-                <Sparkles size={18} /> Ask AI Concierge
+                <Mic size={18} /> AI Voice Companion
               </button>
             </div>
 
@@ -289,7 +289,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
               <h4 style={{ fontSize: '13px', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '14px' }}>
                 Quick Route Suggestions
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '14px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
                 <div
                   className="condition-card"
                   style={{ cursor: 'pointer', background: 'var(--bg-surface)', border: '1px solid var(--border-color)', borderRadius: '18px', padding: '16px', display: 'flex', alignItems: 'center', gap: '14px' }}
@@ -378,7 +378,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
         {/* VIEW 2: DEPARTURE OPTIMIZER TAB */}
         {activeTab === 'departure' && (
-          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Clock size={24} color="var(--primary)" /> Departure Window Optimization
             </h2>
@@ -395,7 +395,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
         {/* VIEW 3: TURN-BY-TURN NAV TAB */}
         {activeTab === 'navigation' && (
-          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <Navigation size={24} color="var(--primary)" /> Turn-by-Turn Navigation Guide
             </h2>
@@ -412,7 +412,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
         {/* VIEW 4: EXPLAINABILITY & ML INSIGHTS TAB */}
         {activeTab === 'explainability' && (
-          <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <h2 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <BarChart3 size={24} color="var(--primary)" /> Machine Learning SHAP Explainability
             </h2>
@@ -427,9 +427,9 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
           </div>
         )}
 
-        {/* VIEW 5: URBAN AI CONCIERGE CHAT */}
+        {/* VIEW 5: URBAN AI VOICE COMPANION */}
         {activeTab === 'ai_chat' && (
-          <div style={{ padding: '24px', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <AIChatbot onSelectRoutePrompt={(promptText) => {
               setActiveTab('home');
               handleQuery({ text: promptText });
@@ -439,7 +439,7 @@ export default function Dashboard({ onLogout, theme, toggleTheme }) {
 
         {/* VIEW 6: ECO ANALYTICS STATS */}
         {activeTab === 'eco_stats' && (
-          <div style={{ padding: '24px', width: '100%' }}>
+          <div style={{ padding: '28px 32px', maxWidth: '1400px', margin: '0 auto', width: '100%' }}>
             <EcoAnalyticsTab />
           </div>
         )}

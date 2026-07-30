@@ -31,8 +31,7 @@ export default function SidebarNav({
 }) {
   const navItems = [
     { id: 'home', label: 'Planner & Map', icon: Compass, badge: 'Live' },
-    { id: 'voice', label: 'Voice AI Agent', icon: Mic, badge: 'Wake Word' },
-    { id: 'ai_chat', label: 'AI Concierge', icon: Bot, badge: 'Grok 2' },
+    { id: 'ai_chat', label: 'AI Voice Companion', icon: Mic, badge: 'Voice AI' },
     { id: 'eco_stats', label: 'Eco Analytics', icon: Leaf },
     { id: 'departure', label: 'Departure Window', icon: Clock },
     { id: 'navigation', label: 'Turn-by-Turn', icon: Navigation },
